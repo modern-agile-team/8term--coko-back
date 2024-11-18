@@ -11,7 +11,7 @@ import { LoggerService } from 'src/common/logger/logger.service';
 @Injectable()
 export class SectionsService {
   constructor(
-    private prisma: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly logger: LoggerService,
   ) {}
 
@@ -50,12 +50,6 @@ export class SectionsService {
   }
 
   async findAll() {
-    this.logger.log('아 이런거야?'); //test
-    this.logger.error('아 이런거야?'); //test
-    this.logger.warn('아 이런거야?'); //test
-    this.logger.debug('아 이런거야?'); //test
-    this.logger.verbose('아 이런거야?'); //test
-
     return this.prisma.section.findMany();
   }
 

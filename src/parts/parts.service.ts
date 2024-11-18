@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  LoggerService,
   NotFoundException,
 } from '@nestjs/common';
 import { CreatePartDto } from './dto/create-part.dto';
@@ -8,7 +9,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PartsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: LoggerService,
+  ) {}
 
   async create(data: CreatePartDto) {
     const { sectionId, name } = data;

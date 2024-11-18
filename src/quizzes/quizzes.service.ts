@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, LoggerService, NotFoundException } from '@nestjs/common';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { UpdateQuizDto } from './dto/update-quiz.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -6,7 +6,10 @@ import { QueryQuizDto } from './dto/query-quiz.dto';
 
 @Injectable()
 export class QuizzesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly logger: LoggerService,
+  ) {}
 
   private async findSectionById(id: number) {
     const section = await this.prisma.section.findUnique({
