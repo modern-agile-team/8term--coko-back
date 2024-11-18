@@ -11,6 +11,7 @@ import { QuizzesModule } from './quizzes/quizzes.module';
 import { SectionsModule } from './sections/sections.module';
 import { ProgressModule } from './progress/progress.module';
 import { PartsModule } from './parts/parts.module';
+import { LoggerModule } from './common/logger/logger.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PartsModule } from './parts/parts.module';
     ProgressModule,
     PartsModule,
     ItemsModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

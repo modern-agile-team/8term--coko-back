@@ -6,10 +6,14 @@ import {
 import { CreateSectionDto } from './dto/create-section.dto';
 import { UpdateSectionDto } from './dto/update-section.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { LoggerService } from 'src/common/logger/logger.service';
 
 @Injectable()
 export class SectionsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly logger: LoggerService,
+  ) {}
 
   private async findSectionById(id: number) {
     const section = await this.prisma.section.findUnique({
@@ -46,6 +50,12 @@ export class SectionsService {
   }
 
   async findAll() {
+    this.logger.log('아 이런거야?'); //test
+    this.logger.error('아 이런거야?'); //test
+    this.logger.warn('아 이런거야?'); //test
+    this.logger.debug('아 이런거야?'); //test
+    this.logger.verbose('아 이런거야?'); //test
+
     return this.prisma.section.findMany();
   }
 
