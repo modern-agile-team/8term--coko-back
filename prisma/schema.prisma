@@ -104,25 +104,45 @@ model Part {
   @@map("parts")
 }
 
-model Item {
-  id        Int      @id @default(autoincrement())
-  name      String
-  cost      Int
-  image     String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+model ItemMainCategory {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique @db.VarChar(255)
+  ItemSubCategory ItemSubCategory[]
+  items           Item[]
 
-  userItems UserItem[] //1:N관계, Item와 userItem 연결
+  @@map("item_main_categories")
+}
+
+model ItemSubCategory {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  mainCategoryId Int              @map("main_category_id")
+  mainCategory   ItemMainCategory @relation(fields: [mainCategoryId], references: [id])
+  items          Item[]
+
+  @@map("item_sub_categories")
+}
+
+model Item {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(255)
+  price          Int
+  image          String
+  mainCategoryId Int              @map("main_category_id")
+  subCategoryId  Int?             @map("sub_category_id")
+  mainCategory   ItemMainCategory @relation(fields: [mainCategoryId], references: [id])
+  subCategory    ItemSubCategory? @relation(fields: [subCategoryId], references: [id])
+  userItems      UserItem[]
 
   @@map("items")
 }
 
 model UserItem {
-  id         Int      @id @default(autoincrement())
-  userId     Int      @map("user_id")
-  itemId     Int      @map("item_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  isEquipped Boolean  @default(false) @map("is_equipped")
+  id          Int      @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  itemId      Int      @map("item_id")
+  purchasedAt DateTime @default(now()) @map("purchased_at")
+  isEquipped  Boolean  @default(false) @map("is_equipped")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)

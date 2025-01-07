@@ -1,13 +1,9 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import {
-  BuyItemDto,
-  EquipItemDto,
-  UnequipItemDto,
-} from './dto/item-changeStatus.dto';
+import { ItemChangeStatusDto, BuyItemDto } from './dto/change-item-status.dto';
 
 export const ApiItems = {
-  getAllItems: () => {
+  getItems: () => {
     return applyDecorators(
       ApiOperation({
         summary: '모든 items 조회',
@@ -21,7 +17,7 @@ export const ApiItems = {
             example: {
               id: 2,
               name: 'blue-hat',
-              cost: 2000,
+              price: 2000,
               image: '2',
               createdAt: '2024-11-05T10:30:15.000Z',
               updatedAt: '2024-11-05T10:40:15.000Z',
@@ -31,6 +27,28 @@ export const ApiItems = {
       }),
     );
   },
+
+  addItem: () => {
+    return applyDecorators(
+      ApiOperation({
+        summary: '개발/테스트를 위한 아이템 추가',
+        description: '유저의 아이템을 추가합니다.',
+      }),
+      ApiResponse({
+        status: 201,
+        description: 'userId, itemId 성공적으로 추가함',
+        content: {
+          JSON: {
+            example: {
+              userId: 1,
+              itemId: 3,
+            },
+          },
+        },
+      }),
+    );
+  },
+
   buyItem: () => {
     return applyDecorators(
       ApiOperation({
@@ -69,7 +87,7 @@ export const ApiItems = {
       }),
       ApiBody({
         description: 'userId와 itemId를 포함한 요청 바디',
-        type: EquipItemDto,
+        type: ItemChangeStatusDto,
       }),
       ApiResponse({
         status: 204,
@@ -99,7 +117,7 @@ export const ApiItems = {
       }),
       ApiBody({
         description: 'userId와 itemId를 포함한 요청 바디',
-        type: UnequipItemDto,
+        type: ItemChangeStatusDto,
       }),
       ApiResponse({
         status: 204,
