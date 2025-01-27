@@ -2,7 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 export const ApiAdmins = {
-  LoginAdmin: () => {
+  loginAdmin: () => {
     return applyDecorators(
       ApiOperation({
         summary: 'admin 정보 인증',

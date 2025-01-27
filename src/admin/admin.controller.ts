@@ -24,7 +24,7 @@ export class AdminController {
   ) {}
 
   // admin 로그인
-  @ApiAdmins.LoginAdmin()
+  @ApiAdmins.loginAdmin()
   @Post('login')
   @HttpCode(200)
   async loginAdmin(

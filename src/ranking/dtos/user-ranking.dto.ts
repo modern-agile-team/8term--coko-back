@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserRankingsDto {
+export class UserRankingDto {
   @ApiProperty({
     description: '사용자 ID',
     example: 22,

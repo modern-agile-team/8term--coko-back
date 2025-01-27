@@ -16,7 +16,11 @@ import { RedisService } from './redis/redis.service';
 import { ConfigService } from '@nestjs/config';
 import { GoogleUserDto } from './google/google-user.dto';
 import { UserInfo } from 'src/users/entities/user.entity';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { ApiAuth } from './auth-swagger';
+import { ResponseUserDto } from 'src/users/dtos/response-user.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -29,11 +33,13 @@ export class AuthController {
 
   // Google 로그인 시작
   @Get('google')
+  @ApiExcludeEndpoint()
   @UseGuards(AuthGuard('google'))
   google() {}
 
   // Google 로그인 콜백 처리
   @Get('google/callback')
+  @ApiExcludeEndpoint()
   @HttpCode(302)
   @UseGuards(AuthGuard('google'))
   async googleLogin(
@@ -49,7 +55,32 @@ export class AuthController {
     res.redirect(this.configService.get<string>('CLIENT_MAIN_PAGE_URL'));
   }
 
+  // accessToken 검증 요청
+  @ApiAuth.verify()
+  @Get('verify')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('accessToken'))
+  async verifyToken(@User() user: UserInfo): Promise<ResponseUserDto> {
+    return user;
+  }
+
+  // refreshToken을 검증하고 accessToken을 재발급
+  @ApiAuth.newAccessToken()
+  @Get('new-accessToken')
+  @HttpCode(201)
+  @UseGuards(AuthGuard('refreshToken'))
+  async verifyRefresh(
+    @User() user: UserInfo,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    // access 토큰 재발급
+    const newAccessToken = await this.tokenService.createAccessToken(user.id);
+    // 쿠키에 엑세스토큰 저장
+    await this.cookieService.setAccessTokenCookie(res, newAccessToken);
+  }
+
   // 로그아웃
+  @ApiAuth.logout()
   @Post('logout')
   @HttpCode(204)
   @UseGuards(AuthGuard('accessToken'))
@@ -59,27 +90,5 @@ export class AuthController {
   ) {
     await this.redisService.del(String(user.id));
     await this.cookieService.deleteCookie(res);
-  }
-
-  // accessToken 검증 요청
-  @Get('verify')
-  @HttpCode(200)
-  @UseGuards(AuthGuard('accessToken'))
-  async verifyToken(@User() user: UserInfo): Promise<any> {
-    return user;
-  }
-
-  // refreshToken을 검증하고 accessToken을 재발급
-  @Get('new-accessToken')
-  @HttpCode(201)
-  @UseGuards(AuthGuard('refreshToken'))
-  async verifyRefresh(
-    @User() user: UserInfo,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<any> {
-    // access 토큰 재발급
-    const newAccessToken = await this.tokenService.createAccessToken(user.id);
-    // 쿠키에 엑세스토큰 저장
-    await this.cookieService.setAccessTokenCookie(res, newAccessToken);
   }
 }

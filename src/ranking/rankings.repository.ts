@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserRankingsDto } from './dtos/user-rankings.dto';
+import { UserRankingDto } from './dtos/user-ranking.dto';
 
 @Injectable()
 export class RankingsRepository {
@@ -16,7 +16,7 @@ export class RankingsRepository {
     page: number,
     limit: number,
     orderBy: object,
-  ): Promise<UserRankingsDto[]> {
+  ): Promise<UserRankingDto[]> {
     const results = await this.prisma.user.findMany({
       skip: (page - 1) * limit, // 건너뛸 항목 수 계산
       take: limit, // 가져올 항목 수

@@ -7,26 +7,26 @@ import { ApiRankings } from './ranking.swagger';
 import { RankingQueryDto } from './dtos/ranking-query.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { RankingPaginationResponseDto } from './dtos/ranking-pagination-res.dto';
+import { ResMyRankingDto } from './dtos/res-my-ranking.dto';
+import { Sort } from './entities/ranking.entity';
+import { RankingSortDto } from './dtos/ranking-sort.dto';
 
 @ApiTags('rankings')
-@Controller('rankings')
-export class RankingsController {
+@Controller('users')
+export class UsersRankingsController {
   constructor(private readonly rankingsService: RankingsService) {}
 
-  // 랭킹 페이지 조회
-  @ApiRankings.findSelectedPageRankings()
-  @Get()
-  async findSelectedPageRankings(
-    @Query() rankingsDto: RankingQueryDto,
-  ): Promise<RankingPaginationResponseDto> {
-    const { sort, page, limit } = rankingsDto;
+  // 자신의 랭킹 조회
+  @ApiRankings.findMyRanking()
+  @Get('me/rankings')
+  @UseGuards(AuthGuard('accessToken'))
+  async getMyRanking(
+    @User() user: UserInfo,
+    @Query() rankingSortDto: RankingSortDto,
+  ): Promise<ResMyRankingDto> {
+    const { sort } = rankingSortDto;
+    const myRanking = await this.rankingsService.getMyRanking(sort, user);
 
-    const allRankings = await this.rankingsService.findSelectedPageRankings(
-      sort,
-      page,
-      limit,
-    );
-
-    return allRankings;
+    return myRanking;
   }
 }

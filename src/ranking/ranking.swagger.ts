@@ -16,7 +16,7 @@ export const ApiRankings = {
       }),
     );
   },
-  getMyRanking: () => {
+  findMyRanking: () => {
     return applyDecorators(
       ApiOperation({
         summary: '나의 랭킹 정보 가져오기',
